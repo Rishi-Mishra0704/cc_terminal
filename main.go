@@ -2,6 +2,7 @@ package main
 
 import (
 	"cc_terminal/models"
+	"cc_terminal/utils"
 	"fmt"
 
 	"gorm.io/driver/postgres"
@@ -29,5 +30,6 @@ func main() {
 		panic("failed to connect database")
 	}
 	// Migrate the User model
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Command{})
+	utils.StartRouter(db)
 }
