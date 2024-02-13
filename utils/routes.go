@@ -14,6 +14,9 @@ func StartRouter(db *gorm.DB) {
 	router.POST("/register", func(c *gin.Context) {
 		controllers.Register(c, db)
 	})
+	router.POST("/login", func(c *gin.Context) {
+		controllers.Login(c, db)
+	})
 
 	// Start the router
 	router.Run(":8080")
