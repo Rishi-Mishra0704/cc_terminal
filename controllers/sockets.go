@@ -2,47 +2,54 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os/exec"
 
 	"github.com/gorilla/websocket"
 )
 
-var Upgrader = websocket.Upgrader{
+var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-	// Upgrade the HTTP connection to a WebSocket connection
-	conn, err := Upgrader.Upgrade(w, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Error upgrading connection to WebSocket:", err)
+		log.Println("Error upgrading connection:", err)
 		return
 	}
 	defer conn.Close()
 
-	// Read messages from the WebSocket connection
 	for {
-		messageType, message, err := conn.ReadMessage()
+		// Read command from client
+		_, command, err := conn.ReadMessage()
 		if err != nil {
-			fmt.Println("Error reading message from WebSocket:", err)
+			log.Println("Error reading command:", err)
 			break
 		}
 
-		// Process the received message (bash command)
-		commandOutput := ExecuteCommand(string(message))
-
-		// Send the command output back to the client
-		err = conn.WriteMessage(messageType, []byte(commandOutput))
+		// Execute command
+		output, err := executeCommand(string(command))
 		if err != nil {
-			fmt.Println("Error writing message to WebSocket:", err)
+			log.Println("Error executing command:", err)
+			output = []byte(fmt.Sprintf("Error executing command: %s", err))
+		}
+
+		// Send output back to client
+		if err := conn.WriteMessage(websocket.TextMessage, output); err != nil {
+			log.Println("Error writing output:", err)
 			break
 		}
 	}
 }
 
-func ExecuteCommand(command string) string {
-	// Placeholder: Execute the bash command and return the output
-	// You need to implement the actual command execution logic here
-	return "Command output: " + command
+func executeCommand(command string) ([]byte, error) {
+	cmd := exec.Command("bash", "-c", command)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
 }
