@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func ListFiles() string {
@@ -61,4 +62,38 @@ func Pwd() string {
 		return fmt.Sprintf("Error getting current directory: %s", err)
 	}
 	return dir
+}
+
+func Cat(args []string) string {
+	if len(args) != 1 {
+		return "Usage: cat <file>"
+	}
+	data, err := os.ReadFile(args[0])
+	if err != nil {
+		return fmt.Sprintf("Error reading file: %s", err)
+	}
+	return string(data)
+}
+
+func Touch(args []string) string {
+	if len(args) != 1 {
+		return "Usage: touch <file>"
+	}
+	file, err := os.Create(args[0])
+	if err != nil {
+		return fmt.Sprintf("Error creating file: %s", err)
+	}
+	file.Close()
+	return "File created successfully"
+}
+
+func Clear() string {
+	cmd := exec.Command("clear")
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+	return ""
+}
+
+func Date() string {
+	return time.Now().Format("Mon Jan _2 15:04:05 MST 2006")
 }

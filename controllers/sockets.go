@@ -46,6 +46,15 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			output = utils.Echo(args)
 		case "pwd":
 			output = utils.Pwd()
+		case "cat":
+			output = utils.Cat(args)
+		case "touch":
+			output = utils.Touch(args)
+		case "clear":
+			output = utils.Clear()
+		case "date":
+			output = utils.Date()
+
 		default:
 			output = utils.ExecuteCommand(command, args)
 		}
