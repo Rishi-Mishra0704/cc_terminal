@@ -1,10 +1,14 @@
 package main
 
 import (
-	"cc_terminal/utils"
+	"cc_terminal/controllers"
+	"fmt"
+	"net/http"
 )
 
 func main() {
 
-	utils.StartRouter()
+	http.HandleFunc("/ws", controllers.HandleWebSocket)
+	fmt.Println("Server started on port 8080")
+	http.ListenAndServe(":8080", nil)
 }
