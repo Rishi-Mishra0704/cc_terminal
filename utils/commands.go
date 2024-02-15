@@ -50,3 +50,15 @@ func ExecuteCommand(command string, args []string) string {
 	}
 	return string(out)
 }
+
+func Echo(args []string) string {
+	return strings.Join(args, " ")
+}
+
+func Pwd() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return fmt.Sprintf("Error getting current directory: %s", err)
+	}
+	return dir
+}

@@ -42,6 +42,10 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			output = utils.CreateDirectory(args)
 		case "cd":
 			output = utils.ChangeDirectory(args)
+		case "echo":
+			output = utils.Echo(args)
+		case "pwd":
+			output = utils.Pwd()
 		default:
 			output = utils.ExecuteCommand(command, args)
 		}
